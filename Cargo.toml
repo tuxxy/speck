@@ -1,10 +1,11 @@
 [package]
-name = "speck"
-version = "0.1.0"
+name = "speck-rs"
+version = "0.1.1"
 authors = ["tuxxy <me@johnpacific.com>"]
 edition = "2018"
 description = "A nostd implementation of NSA's lightweight block cipher Speck"
-repository = "https://docs.rs/speck"
+repository = "https://github.com/tuxxy/speck"
+documentation = "https://docs.rs/speck-rs"
 license = "GPL-3.0"
 keywords = ["cryptography", "block-cipher", "encryption", "speck", "lightweight"]
 categories = ["cryptography", "no-std"]
