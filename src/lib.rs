@@ -1,6 +1,10 @@
 #![no_std]
 #![forbid(unsafe_code)]
 
+pub mod cipher_modes;
+
+use crate::cipher_modes::ECB;
+
 /// This library implements NSA's lightweight block cipher Speck.
 /// The formal specification of Speck can be found: https://eprint.iacr.org/2013/404.pdf
 ///
@@ -98,6 +102,16 @@ impl Speck {
     }
 }
 
+impl ECB for Speck {
+    fn encrypt(&self, plaintext: &u128) -> u128 {
+        self.encrypt(plaintext)
+    }
+
+    fn decrypt(&self, ciphertext: &u128) -> u128 {
+        self.decrypt(ciphertext)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -112,5 +126,16 @@ mod tests {
         let speck = Speck::new(&key);
         assert_eq!(speck.encrypt(&plaintext), ciphertext);
         assert_eq!(speck.decrypt(&ciphertext), plaintext);
+    }
+
+    #[test]
+    fn test_speck_ecb_mode() {
+        let key: u128 = 0x0f0e0d0c0b0a09080706050403020100;
+        let plaintext: u128 = 0x6c617669757165207469206564616d20;
+        let ciphertext: u128 = 0xa65d9851797832657860fedf5c570d18;
+
+        let speck = Speck::new(&key);
+        assert_eq!(<Speck as ECB>::encrypt(&speck, &plaintext), ciphertext);
+        assert_eq!(<Speck as ECB>::decrypt(&speck, &ciphertext), plaintext);
     }
 }
