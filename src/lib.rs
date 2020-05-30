@@ -79,6 +79,23 @@ impl Speck {
         // The chunks are mutated in place, so we just put them back together
         chunk_2 as u128 | (chunk_1 as u128) << 64
     }
+
+    /// Performs a raw decryption using Speck.
+    ///
+    /// TODO: Implement ciphermodes, potentially expose this as ECB.
+    pub(crate) fn decrypt(&self, ciphertext: &u128) -> u128 {
+        // Split the u128 block into u64 chunks
+        let mut chunk_1 = (ciphertext >> 64) as u64;
+        let mut chunk_2 = *ciphertext as u64;
+
+        // Perform the Speck round with each of its round keys
+        for round_key in self.0.iter().rev() {
+            inv_round(&mut chunk_1, &mut chunk_2, round_key);
+        }
+
+        // The chunks are mutated in place, so we just put them back together
+        chunk_2 as u128 | (chunk_1 as u128) << 64
+    }
 }
 
 #[cfg(test)]
@@ -86,7 +103,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_speck128_128_encryption() {
+    fn test_speck128_128_encryption_and_decryption() {
         // Speck128/128 test vectors (see Appendix C in the paper)
         let key: u128 = 0x0f0e0d0c0b0a09080706050403020100;
         let plaintext: u128 = 0x6c617669757165207469206564616d20;
@@ -94,6 +111,6 @@ mod tests {
 
         let speck = Speck::new(&key);
         assert_eq!(speck.encrypt(&plaintext), ciphertext);
-
+        assert_eq!(speck.decrypt(&ciphertext), plaintext);
     }
 }
