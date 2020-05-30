@@ -47,5 +47,11 @@ fn key_schedule(k1: &mut u64, k2: &mut u64) -> [u64; ROUNDS] {
     schedule
 }
 
+/// Implements SPECK encryption/decryption.
+/// This tuple-structs takes a key schedule as input.
+///
+/// TODO: Build an API around generating the key schedule
+pub struct SPECK(&[u64; ROUNDS]);
+
 #[cfg(test)]
 mod tests {}
